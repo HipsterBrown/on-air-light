@@ -1,0 +1,19 @@
+{
+  "include": [
+    "$(MODDABLE)/examples/manifest_base.json",
+    "$(MODDABLE)/examples/manifest_net.json",
+    "$(MODDABLE)/modules/network/mdns/manifest.json",
+    "$(MODDABLE)/modules/pins/pwm/manifest.json"
+  ],
+  "modules": {
+    "*": [
+      "./main",
+      "$(MODULES)/network/http/*"
+    ]
+  },
+  "preload": "http",
+  "config": {
+    "ssid": "$(SSID)",
+    "password": "$(PASS)"
+  }
+}
