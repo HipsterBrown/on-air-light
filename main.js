@@ -2,6 +2,7 @@ import Net from "net";
 import { Server } from "http";
 import MDNS from "mdns";
 import PWM from "pins/pwm";
+import { RGB } from "./lib/rgb-led";
 
 let hostName = "on-air";
 
@@ -21,16 +22,8 @@ new MDNS({ hostName }, function (message, value) {
   }
 });
 
-const led = {
-  r: new PWM({ pin: 12 }),
-  g: new PWM({ pin: 13 }),
-  b: new PWM({ pin: 14 }),
-};
-
-// red
-led.r.write(0);
-led.g.write(1023);
-led.b.write(1023);
+const led = new RGB([12, 13, 14]);
+led.red();
 
 const server = new Server({});
 
@@ -48,14 +41,11 @@ server.callback = function (message, val1, val2) {
     case Server.headersComplete:
       return String;
     case Server.requestComplete:
-      trace(`Request complete! ${val1} ${val2} ${JSON.stringify(this)}\n`);
+      trace(`Request complete! ${val1} ${val2}\n`);
     case Server.prepareResponse:
       trace(`Responding to request\n`);
       if (this.path.includes("state")) {
-        // blue
-        led.r.write(1023);
-        led.g.write(1023);
-        led.b.write(0);
+        led.blue();
       }
       return {
         status: 200,
@@ -67,6 +57,5 @@ server.callback = function (message, val1, val2) {
 
 // TODO:
 // - cleanup HTTP service abstraction, i.e. AdvertisedServer, to include MDNS setup, easier route handlers
-// - pull in j5e or create smaller abstraction class around RGB leds
 // - figure out status colors: (green === service ready, blue === active, none === inactive, red === error)
 // - profit ?
