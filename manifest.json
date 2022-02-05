@@ -9,7 +9,9 @@
     "*": [
       "./main",
       "$(MODULES)/network/http/*"
-    ]
+    ],
+    "rgb-led": "./lib/rgb-led",
+    "http-service": "./lib/http-service"
   },
   "preload": "http",
   "config": {
