@@ -40,3 +40,14 @@ mcconfig -d -m -p esp32
 Once the LEDs are green for 3 seconds, the web UI should be available at `http://on-air.local/`.
 
 ![web interface](./docs/images/web-ui.png)
+
+## Deployed Project
+
+External box:
+![external box](./docs/images/external-box.jpg)
+
+Internal layout:
+![internal box](./docs/images/internal-box.jpg)
+
+Breadboard wiring:
+![close up of breadboard wiring](./docs/images/internal-zoom.jpg)
