@@ -51,7 +51,7 @@ service.post("/api/toggle", () => {
 
 service.post("/api/color", (request) => {
   try {
-    const { color } = JSON.parse(request.body);
+    const { color } = request.body;
     if (led[color] !== undefined) {
       led[color]();
     } else if (Array.isArray(color)) {
@@ -66,8 +66,89 @@ service.post("/api/color", (request) => {
   }
 });
 
+function isSelected(color, currentColor) {
+  switch (color) {
+    case "red":
+      if (currentColor[0] === 0) return "selected";
+    case "green":
+      if (currentColor[1] === 0) return "selected";
+    case "blue":
+      if (currentColor[2] === 0) return "selected";
+    default:
+      return "";
+  }
+}
+
+const indexHandler = (_request) => {
+  const body = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>On-air light control</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 2rem;
+      }
+      label, input {
+        display: block;
+      }
+      input, form { margin-bottom: 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>On-air light control</h1>
+    <form action="toggle" method="post">
+      <button type="submit">Toggle light</button>
+    </form>
+    <form action="color" method="post">
+      <label id="color-select-label" htmlFor="color">Select a color</label>
+      <select id="color" name="color" onchange="this.form.submit()">
+        <option ${isSelected("red", led.currentColor)}>red</option>
+        <option ${isSelected("green", led.currentColor)}>green</option>
+        <option ${isSelected("blue", led.currentColor)}>blue</option>
+      </select>
+    </form>
+  </body>
+</html>
+  `;
+  return { headers: ["Content-type", "text/html"], body };
+};
+
+service.get("/", indexHandler);
+
+service.post("/toggle", () => {
+  led.toggle();
+  return {
+    status: 303,
+    headers: ["Location", "/"],
+  };
+});
+
+service.post("/color", (request) => {
+  trace(`Setting color: ${request.body}\n`);
+  try {
+    const { color } = request.body;
+    if (led[color] !== undefined) {
+      led[color]();
+    } else if (Array.isArray(color)) {
+      led.setColor(color);
+    } else {
+      throw new Error("Invalid color value");
+    }
+    return {
+      status: 303,
+      headers: ["Location", "/"],
+    };
+  } catch (error) {
+    trace(`Unable to parse ${request.body}\n`);
+    return { status: 422, body: error.toString() };
+  }
+});
+
 /**
 TODO:
-- basic web UI
 - more refinement of color control
 **/
