@@ -15,7 +15,7 @@ _While the materials demonstrate using an ESP32 development board, it is possibl
 
 ## Wiring Diagram
 
-![breadboard wiring](./docs/images/On-Air-LIght.svg)
+![breadboard wiring](./docs/images/On-Air-LIght.png)
 
 ## Setup
 
