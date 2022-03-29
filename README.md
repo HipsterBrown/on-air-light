@@ -41,6 +41,13 @@ Once the LEDs are green for 3 seconds, the web UI should be available at `http:/
 
 ![web interface](./docs/images/web-ui.png)
 
+There are some HTTP API endpoints for checking and controlling the light outside of the web UI:
+
+- `GET /api/state`: returns the current color if the light is on, otherwise returns `[1023, 1023, 1023]` as "off"
+- `POST /api/toggle`: toggles the state of the light, using the last used color if the light is off
+- `POST /api/color`: expects a `color` field in the body to set the color of the light, returns 204 status code if successful
+
+
 ## Deployed Project
 
 External box:
@@ -51,3 +58,13 @@ Internal layout:
 
 Breadboard wiring:
 ![close up of breadboard wiring](./docs/images/internal-zoom.jpg)
+
+## Computer Camera event daemon
+
+Run using [`pm2`] to control long running process:
+
+```
+pm2 start daemon/index.mjs --name on-air
+```
+
+The script (`daemon/index.mjs`) watches the standard output stream from [`log stream`](https://developer.apple.com/documentation/os/logging) on MacOS for Camera events that include "turn off" and "turn off" messages. When it sees one of those messages, it will make a POST request to the `/api/toggle` endpoint at the `http://on-air.local` host. If it cannot reach `on-air.local`, it will log the error and continue watching the log output.
