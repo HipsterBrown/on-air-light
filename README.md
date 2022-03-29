@@ -61,7 +61,7 @@ Breadboard wiring:
 
 ## Computer Camera event daemon
 
-Run using [`pm2`] to control long running process:
+Run using [`pm2`](https://pm2.keymetrics.io/docs/usage/quick-start/) to control long running process:
 
 ```
 pm2 start daemon/index.mjs --name on-air
